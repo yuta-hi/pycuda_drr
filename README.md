@@ -8,4 +8,4 @@ PyDRR lets you generate Digitaly Reconstructed Radiography image using CUDA.
 - PyCUDA 2017.1.1 or later
 
 # Acknowledgment
-Special thank to My colleague Mr. Kabashima (@elda27) for supporting this development.
+Special thanks to my colleague Mr. Kabashima (@elda27) for supporting this development.
