@@ -12,14 +12,14 @@ def main():
         print('rendering.py <volume path>')
         return
 
-    mhd_filename = sys.argv[0]
+    mhd_filename = sys.argv[1]
     # Load materials
     itkimage = sitk.ReadImage(mhd_filename)
     volume  = sitk.GetArrayFromImage(itkimage)
     spacing = itkimage.GetSpacing()
     spacing = spacing[::-1]
 
-    volume = pydrr.utils.HU2Myu(volume - 700, 0.2683)
+    volume = pydrr.utils.HU2Myu(volume - 1000, 0.2683)
 
     pm_Nx3x4, image_size, image_spacing = load_test_projection_matrix()
     T_Nx4x4 = load_test_transform_matrix()
@@ -36,7 +36,7 @@ def main():
 
     # Host memory -> (Device memory) -> Texture memory
     t_volume_context = volume_context.to_texture()
-    
+
     d_image = projector.project(t_volume_context, geometry_context, T_Nx4x4)
 
     # Device memory -> Host memory
@@ -49,7 +49,7 @@ def main():
         divider = mpl_toolkits.axes_grid1.make_axes_locatable(ax)
         cax = divider.append_axes('right', '5%', pad='3%')
         im = ax.imshow(image[:, :, i], interpolation='none', cmap='gray')
-        fig.colorbar(im, cax=cax)
+        plt.colorbar(im, cax=cax)
     plt.show()
 
 def load_test_projection_matrix(SDD=2000, SOD=1800, image_size=[1280, 1280], spacing=[0.287, 0.287] ):
@@ -89,7 +89,7 @@ def load_test_projection_matrix(SDD=2000, SOD=1800, image_size=[1280, 1280], spa
 
     pm_Nx3x4 = utils.constructProjectionMatrix(intrinsic, extrinsic)
     #pm_Nx3x4 = np.repeat(pm_Nx3x4, 400, axis=0)
-    
+
     print('pm_Nx3x4:', pm_Nx3x4)
     print('pm_Nx3x4.shape:', pm_Nx3x4.shape)
 
