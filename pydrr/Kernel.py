@@ -1,9 +1,10 @@
-from pycuda import driver, compiler, gpuarray, tools 
+from pycuda import driver, compiler, gpuarray, tools
 from . import KernelManager
 
 class Kernel:
     def __init__(self, module, func_name, attrs):
         self.parent_module = module
+        self.func_name = func_name
         self.kernel = module.get_function(func_name)
         self.attributes = attrs
         self.setCurrent()

@@ -19,6 +19,11 @@ def main():
     spacing = itkimage.GetSpacing()
     spacing = spacing[::-1]
 
+    print(pydrr.get_supported_kernels())
+    print(pydrr.get_current_kernel())
+    pydrr.set_current_kernel('render_with_cubic_interp')
+    print(pydrr.get_current_kernel())
+
     volume = pydrr.utils.HU2Myu(volume - 1000, 0.2683)
 
     pm_Nx3x4, image_size, image_spacing = load_test_projection_matrix()
@@ -51,6 +56,9 @@ def main():
         im = ax.imshow(image[:, :, i], interpolation='none', cmap='gray')
         plt.colorbar(im, cax=cax)
     plt.show()
+
+    from chainer_bcnn.data import save_image
+    save_image('hoge.mhd', image)
 
 def load_test_projection_matrix(SDD=2000, SOD=1800, image_size=[1280, 1280], spacing=[0.287, 0.287] ):
 
