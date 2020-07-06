@@ -7,6 +7,20 @@ import numpy as np
 import sys
 from pydrr import utils
 
+def load_image(filename):
+    itkimage = sitk.ReadImage(filename)
+    volume  = sitk.GetArrayFromImage(itkimage)
+    spacing = itkimage.GetSpacing()
+    spacing = spacing[::-1]
+    return volume, spacing
+
+def save_image(filename, image, spacing):
+    image = np.transpose(image, (2,0,1))
+    spacing = (*spacing[::-1], 1)
+    itkimage = sitk.GetImageFromArray(image)
+    itkimage.SetSpacing(spacing)
+    sitk.WriteImage(itkimage, filename)
+
 def main():
     if len(sys.argv) < 2:
         print('rendering.py <volume path>')
@@ -14,10 +28,7 @@ def main():
 
     mhd_filename = sys.argv[1]
     # Load materials
-    itkimage = sitk.ReadImage(mhd_filename)
-    volume  = sitk.GetArrayFromImage(itkimage)
-    spacing = itkimage.GetSpacing()
-    spacing = spacing[::-1]
+    volume, spacing = load_image(mhd_filename)
 
     print(pydrr.get_supported_kernels())
     print(pydrr.get_current_kernel())
@@ -57,8 +68,8 @@ def main():
         plt.colorbar(im, cax=cax)
     plt.show()
 
-    from chainer_bcnn.data import save_image
-    save_image('hoge.mhd', image)
+    save_image('drr.mhd', image, image_spacing)
+
 
 def load_test_projection_matrix(SDD=2000, SOD=1800, image_size=[1280, 1280], spacing=[0.287, 0.287] ):
 
